@@ -1,0 +1,4 @@
+docker run -i -t ubuntu dedigimizde bir container olusuyor ve exit dedigimizde stop ediyor. Tekrar “docker run -i -t ubuntu” dedigimizde yeni bir container daha olusyor. Yani onceki stop edene giris yapmiyor.
+
+
+https://labs.play-with-docker.com/

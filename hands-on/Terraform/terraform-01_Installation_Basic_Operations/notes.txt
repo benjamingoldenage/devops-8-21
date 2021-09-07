@@ -1,0 +1,40 @@
+https://medium.com/devopsturkiye/tagged/terraform?p=15d7cafda1c1
+
+https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started
+
+
+main.tf 
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.56.0"
+    }
+  }
+}
+
+provider "aws" {
+  # Configuration options
+  region = "us-east-1"
+}
+
+resource "aws_instance" "tf-ec2" {
+  ami           = "ami-0c2b8ca1dad447f8a"
+  instance_type = "t2.micro"
+  key_name      = "ben"
+  tags = {
+    "Name" = "created-by-tf"
+  }
+}
+
+resource "aws_s3_bucket" "tf-s3" {
+  bucket = "benjamin-tf-test-bucket"
+  acl    = "private"
+}
+
+
+
+
+
+
+Arkadaşlar, komutlar ve çıktı arasında ayrım yapmamıza yardımcı olması için bu komutu çalıştırabilirsiniz (Yani EC2'ye bağlandığımız Terminali renkli hale getiriyor. ) :  export PS1="\[\e[;35m\][\u@\h \W]\$ \[\e[m\]"

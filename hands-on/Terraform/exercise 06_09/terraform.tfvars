@@ -1,0 +1,12 @@
+region = "us-east-1"
+profile = "cw-training"
+vpc_cidr_block = "10.2.0.0/16"
+public_subnet_cidr = ["10.2.0.0/20", "10.2.32.0/20", "10.2.64.0/20", "10.2.96.0/20", "10.2.128.0/20", "10.2.160.0/20"]
+private_subnet_cidr = ["10.2.16.0/20", "10.2.48.0/20", "10.2.80.0/20", "10.2.112.0/20", "10.2.144.0/20", "10.2.176.0/20"]
+public_subnet_count = 6
+private_subnet_count = 6
+environment = "MY_ENV"
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"]
+keypem = "ben"
+instancetype = "t2.micro"
+secgr-dynamic-ports = [22, 80, 443, 8080]
