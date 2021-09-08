@@ -340,10 +340,10 @@ exit
 sudo ls /var/lib/docker/volumes/full-vol/_data
 ```
 
-- Run the `clarusways/hello-clarus` container with interactive shell open, name the container as `clarus`, and show the inside of `hello-clarus` directory.
+- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `clarus`, and show the inside of `hello-clarus` directory.
 
 ```bash
-docker run -it --name clarus clarusways/hello-clarus sh
+docker run -it --name clarus clarusway/hello-clarus sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
 dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
@@ -365,7 +365,7 @@ app.py
 - Run the `clarusways/hello-clarus` container with interactive shell open, name the container as `try1`, attach the volume `full-vol` to `/cw` mount point in the container, and show that `/cw` directory is created and files inside volume are copied to this directory.
 
 ```bash
-docker run -it --name try1 -v full-vol:/cw clarusways/hello-clarus sh
+docker run -it --name try1 -v full-vol:/cw clarusway/hello-clarus sh
 / # ls
 bin           dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
 cw            etc           home          media         opt           root          sbin          sys           usr
@@ -390,10 +390,10 @@ full.txt
 sudo ls /var/lib/docker/volumes/empty-vol/_data
 ```
 
-- Run the `clarusways/hello-clarus` container with interactive shell open, name the container as `try2`, attach the volume `empty-vol` to `/hello-clarus` mount point in the container.
+- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `try2`, attach the volume `empty-vol` to `/hello-clarus` mount point in the container.
 
 ```bash
-docker run -it --name try2 -v empty-vol:/hello-clarus clarusways/hello-clarus sh
+docker run -it --name try2 -v empty-vol:/hello-clarus clarusway/hello-clarus sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
 dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
@@ -425,10 +425,10 @@ sudo ls /var/lib/docker/volumes/full-vol/_data
 full.txt
 ```
 
-- Run the `clarusways/hello-clarus` container with interactive shell open, name the container as `try3`, attach the volume `full-vol` to `/hello-clarus` mount point in the container, and show that we just see the files inside volume regardless of  the target directory is full or empty.
+- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `try3`, attach the volume `full-vol` to `/hello-clarus` mount point in the container, and show that we just see the files inside volume regardless of  the target directory is full or empty.
 
 ```bash
-docker run -it --name try3 -v full-vol:/hello-clarus clarusways/hello-clarus sh
+docker run -it --name try3 -v full-vol:/hello-clarus clarusway/hello-clarus sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
 dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
