@@ -1,1 +1,50 @@
+https://www.youtube.com/watch?v=j_3WcTcQlh0&ab_channel=AWSHandsOn
 
+exec ve attach farkı için
+
+
+COMMANDS
+: docker ps
+: docker run ImageName
+: docker start ContainerName/ID
+: docker stop ContainerName/ID
+
+: docker pause ContainerName/ID
+: docker unpause  ContainerName/ID
+
+: docker top ContainerName/ID
+: docker stats ContainerName/ID
+
+: docker attach ContainerName/ID
+
+: docker kill ContainerName/ID
+: docker rm ContainerName/ID
+
+: docker history ImageName/ID
+
+References:
+https://www.google.co.in/search?rlz=1...
+
+https://docs.docker.com/engine/refere...
+
+Notes
+
+A container image is a lightweight, stand-alone, executable package of a piece of software that includes everything needed to run it: code, runtime, system tools, system libraries, settings.
+
+Features of Containers:
+
+Are lightweight
+
+Fewer resources are used
+
+Booting of containers is very fast
+
+Can start, stop, kill, remove containers easily and quickly
+
+Operating System resources can be shared within Docker
+
+Containers run on the same machine sharing the same Operating system Kernel, this makes it faster
+
+You can use the command
+docker container create
+to create a container in stopped state
