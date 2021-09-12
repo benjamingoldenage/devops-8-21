@@ -4,7 +4,7 @@
 
 provider "aws" {
   region = "us-east-1"
-  profile = "default"
+  profile = "matt"
   //  access_key = ""
   //  secret_key = ""
   //  If you have entered your credentials in AWS CLI before, you do not need to use these arguments.
@@ -31,8 +31,7 @@ resource "aws_instance" "maven-ec2" {
                 tar -zxvf $(ls | grep apache-maven-*-bin.tar.gz)
                 rm -rf $(ls | grep apache-maven-*-bin.tar.gz)
                 echo "M2_HOME=/home/ec2-user/$(ls | grep apache-maven)" >> /home/ec2-user/.bash_profile
-                echo 'PATH=$PATH:$M2_HOME/bin' >> /home/ec2-user/.bash_profile
-                echo 'export $PATH' >> /home/ec2-user/.bash_profile
+                echo 'export PATH=$PATH:$M2_HOME/bin' >> /home/ec2-user/.bash_profile
                 EOF
 }
 

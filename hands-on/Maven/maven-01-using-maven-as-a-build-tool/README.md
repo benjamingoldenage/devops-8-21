@@ -35,28 +35,27 @@ At the end of the this hands-on training, students will be able to;
 - Run the command below to check if Java is available.
 
 ```bash
-$ java -version
+java -version
 ```
 
-- Cat ```~/.bahs_profile``` file to check if Maven's path is correctly transferred. If not paste the necessary lines manually.
+- Cat ```~/.bash_profile``` file to check if Maven's path is correctly transferred. If not paste the necessary lines manually.
 
 ```
 # Append the lines below into ~/.bash_profile file by making necessary changes.
 M2_HOME=/home/ec2-user/<apache-maven-directory-with-its-version>
-PATH=$PATH:$M2_HOME/bin
-export $PATH
+export PATH=$PATH:$M2_HOME/bin
 ```
 
 - Run the command below to check if mvn commands are available.
 
 ```bash
-$ mvn --version
+mvn --version
 ```
 
 - If not, run the command below and wait for the EC2 machine to get ready.
 
 ```bash
-$ sudo reboot
+sudo reboot
 ```
 
 
@@ -65,7 +64,7 @@ $ sudo reboot
 - Run the command below to produce an outline of a Java project with Maven.
 
 ```bash
-$ mvn archetype:generate -DgroupId=com.clarus.maven -DartifactId=maven-experiment -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mvn archetype:generate -DgroupId=com.clarus.maven -DartifactId=maven-experiment -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
 
 - Cd into the project folder.
@@ -73,13 +72,13 @@ $ mvn archetype:generate -DgroupId=com.clarus.maven -DartifactId=maven-experimen
 - Run the command below to be able to use tree command.
 
 ```bash
-$ sudo yum install -y tree
+sudo yum install -y tree
 ```
 
 - Run the command below to show the directory structure of the project.
 
 ```bash
-$ tree
+tree
 ```
 
 - Go into the folder where App.java resides and ```cat``` the auto generated ```hello world``` application in Java.
@@ -105,7 +104,7 @@ $ tree
 - Run the command below.
 
 ```bash
-$ mvn compile
+mvn compile
 ```
 
 - Go into the folder ```<project-root>/target/classes/``` and show the class file.
@@ -116,7 +115,7 @@ $ mvn compile
 >### mvn clean test
 
 ```bash
-$ mvn clean test
+mvn clean test
 ```
 
 - Show that there is a new folder named ```target``` in the project root. 
@@ -131,7 +130,7 @@ $ mvn clean test
 - Run the command below.
 
 ```bash
-$ mvn clean package
+mvn clean package
 ```
 
 - Go into the folder ```<project-root>/target/``` and show the ```maven-experiment-1.0-SNAPSHOT.jar``` file as the output of the ```mvn package``` command.
@@ -139,7 +138,7 @@ $ mvn clean package
 - Run the command below to start the application.
 
 ```bash
-$ java -jar maven-experiment-1.0-SNAPSHOT.jar
+java -jar maven-experiment-1.0-SNAPSHOT.jar
 ```
 
 - Explain the error in the standard output. 
@@ -179,7 +178,7 @@ $ java -jar maven-experiment-1.0-SNAPSHOT.jar
 ```
 
 ```bash
-$ mvn clean package
+mvn clean package
 ```
 
 
@@ -188,7 +187,7 @@ $ mvn clean package
 - Now, open up a fresh terminal on your local computer and run the command below.
 
 ```bash
-$ scp -i <path-to-your-pem-file> -r <path-to-your-home-directory>/.aws ec2-user@<IP-of-your-instance>:/home/ec2-user/
+scp -i <path-to-your-pem-file> -r <path-to-your-home-directory>/.aws ec2-user@<IP-of-your-instance>:/home/ec2-user/
 ```
 
 - Check if the the credentials are transferred to EC2 instance.
@@ -198,7 +197,7 @@ $ scp -i <path-to-your-pem-file> -r <path-to-your-home-directory>/.aws ec2-user@
 - Run the command below to start the application. This time we are running the executable jar file with suffix ```jar-with-dependencies```.
 
 ```bash
-$ java -jar maven-experiment-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar maven-experiment-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 - Explain what the application does in the background.
@@ -210,7 +209,7 @@ $ java -jar maven-experiment-1.0-SNAPSHOT-jar-with-dependencies.jar
 - Run the command below to install our own package into .m2 folder.
 
 ```bash
-$ mvn install
+mvn install
 ```
 
 - Go into ```~/.m2/repository``` folder and show where our package is installed.
@@ -236,7 +235,7 @@ $ mvn install
 - Run the command below.
 
 ```bash
-$ mvn clean site
+mvn clean site
 ```
 
 - Show the output ```site``` directory under target directory.
@@ -244,15 +243,15 @@ $ mvn clean site
 - Run the command below to install Apache Server.
 
 ```bash
-$ sudo yum install -y httpd
-$ sudo systemctl start httpd
-$ sudo systemctl enable httpd
+sudo yum install -y httpd
+sudo systemctl start httpd
+sudo systemctl enable httpd
 ```
 
 - Run the command below to copy the contents of the site folder under ```/var/www/html``` folder.
 
 ```bash
-$ sudo cp -a site/. /var/www/html
+sudo cp -a site/. /var/www/html
 ```
 
 
