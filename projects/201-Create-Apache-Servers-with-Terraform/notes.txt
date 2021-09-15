@@ -1,0 +1,23 @@
+* TERRAFORM KURULUM:
+https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started
+
+sudo yum update -y
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+terraform version
+
+
+* How to Use SCP Command to Securely Transfer Files
+https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
+
+
+scp -i ~/oliver.pem README.md tf-draw.png ec2-user@34.230.31.114:/home/ec2-user
+
+
+* https://medium.com/scalereal/how-to-use-multiple-aws-providers-in-a-terraform-project-672da074c3eb
+
+* https://www.terraform.io/docs/language/functions/element.html
+
+** Bu guzel bir udemy soru kaynagi:
+https://www.udemy.com/course/hashicorp-certified-terraform-associate-2020/
