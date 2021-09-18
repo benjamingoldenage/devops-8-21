@@ -1,0 +1,3 @@
+* Terminali renklendirmek için bu kodu girebilirsiniz Arkadaşlar. 
+export PS1="\[\e[;35m\][\u@\h \W]\$ \[\e[m\]"  Daha da kalıcı olmasını istiyorsanız.  
+ec-2'nin home sayfası altında bulunan /.bashrc dosyasının içerisine bu kodu kopyalayın.

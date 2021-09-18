@@ -260,7 +260,7 @@ docker-compose down
 - Run `docker-compose up --build` command to update the image. 
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 - Enter http://`ec2-host-name`:5000/ in a browser, check if the app updated. Show that the changes took place on the browser. 
