@@ -1,0 +1,5 @@
+* DOCKER KOMUTLARINDA ÖNCESİNDE SUDO YAZMAMAK İÇİN;
+sudo usermod -a -G docker ec2-user
+newgrp docker
+
+* tüm işlemleri Ubuntu EC2 içinde deneyebilirsin.
