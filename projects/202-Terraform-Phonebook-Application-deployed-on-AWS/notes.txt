@@ -1,0 +1,18 @@
+1. export PS1="\e[1;36m Benjamin'sPC/\W>>> \$ \e[m "
+
+2. commands for terraform enviroment:
+sudo yum update -y 
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo 
+sudo yum -y install terraform 
+sudo yum -y install git 
+sudo yum install tree -y 
+terraform --version 
+git --version 
+mkdir tf-files 
+cd tf-files 
+touch main.tf outputs.tf provider.tf sec-gr.tf user-data.sh
+
+
+3. monitoring_interval - (Optional) The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance.
+ To disable collecting Enhanced Monitoring metrics, specify 0. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60.

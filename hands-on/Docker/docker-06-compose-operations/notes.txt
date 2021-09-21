@@ -1,0 +1,2 @@
+https://github.com/MiranaSGit/to-do-api Cumartesi günü docker-compose ile yaptığımız python-flask handson'unun terraform versiyonu. 
+pyhton kodu ve docker configurasyon dosyaları Heredoc ile user-data içine atıldı.
