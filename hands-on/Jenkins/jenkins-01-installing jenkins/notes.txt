@@ -17,3 +17,11 @@ sudo systemctl start jenkins
 sudo systemctl enable jenkins
 # sudo systemctl status jenkins
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+--------------
+To access the admin password:
+If you run Jenkins inside docker as a detached container, you can use docker logs < containerId > commands to view the Jenkins logs.
+Or, execute the following commands:
+$ docker exec -it < containerId > bash
+$ cat /var/jenkins_home/secrets/initialAdminPassword

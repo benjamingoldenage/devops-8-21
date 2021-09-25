@@ -110,8 +110,6 @@ sudo systemctl status jenkins
 
 ```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-
-431846ccafef4f4eb5fbdc8c5e1d98ed
 ```
 - Open your browser, get your ec2 instance Public IPv4 DNS and paste it at address bar with 8080. 
 "http://[ec2-public-dns-name]:8080"

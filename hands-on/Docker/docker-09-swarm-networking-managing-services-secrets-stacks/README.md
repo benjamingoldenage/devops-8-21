@@ -268,7 +268,8 @@ cat newpassword
 - Create a folder for the project and change into your project directory
   
 ```bash
-mkdir todoapi && cd todoapi
+mkdir todoapi
+cd todoapi
 ```
 
 - Create a file called `docker-compose.yml` in your project folder with following setup and explain it.
@@ -339,7 +340,8 @@ docker stack rm clarus-todoapi
 - Create a folder for the project and change into your project directory
   
 ```bash
-mkdir wordpress && cd wordpress
+mkdir wordpress
+cd wordpress
 ```
 
 - Create a file called `wp_password.txt` containing a password in your project folder.

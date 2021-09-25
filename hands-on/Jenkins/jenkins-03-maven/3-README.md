@@ -93,7 +93,7 @@ sudo yum install git -y
 
 - For Description : `This Job is packaging Java-Tomcat-Sample Project and creates a war file.`
 
-- At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `1`.
+- At `General Tab`, select Discard old builds, `Strategy` is `Log Rotation`, and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `1`.
 
 - From `Source Code Management` part select `Git`
 
@@ -313,5 +313,7 @@ git push
 - `Save` and click the `Build Now` option.
 
 - Check the console log
+
+- (note: git configuration needs to be set for Jenkins user)
 
 - Back to the job tab and show the `Last Successful Artifacts : single-module-project.jar`
