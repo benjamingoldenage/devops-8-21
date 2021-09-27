@@ -37,42 +37,4 @@ resource "aws_s3_bucket" "tf-s3" {
 
 
 
-Arkadaşlar, komutlar ve çıktı arasında ayrım yapmamıza yardımcı olması için bu komutu çalıştırabilirsiniz 
-(Yani EC2'ye bağlandığımız Terminali renkli hale getiriyor. ) :  export PS1="\[\e[;35m\][\u@\h \W]\$ \[\e[m\]"
-
-
-$ wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
-$ unzip terraform_0.12.26_linux_amd64.zip
-$ mkdir terraform_binary
-$ mv terraform terraform_binary/
-
-
-Now we will update our path so that we can call that binary anywhere on the machine. To set our pat on a MacOS machine or Linux machine we will edit our bash profile. To do that we should open .profile file with any text editor 
-(such as vim or nano) and add following command to end of the file. Then save and exit.
-
-export PATH="$PATH:~/terraform_binary"
-
-$ terraform --version
-
-
-*****
-FOR AMAZON LINUX 
-$ sudo yum update -y
-$ sudo yum install -y yum-utils
-$ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-$ sudo yum -y install terraform
-$ terraform --version
-
-
-***
-
-resource "aws_vpc" "main" {
-  cidr_block = var.base_cidr_block
-}
-
-< BLOCK TYPE > "< BLOCK LABEL >" "< BLOCK LABEL >" {
-  # Block body
-  < IDENTIFIER > = < EXPRESSION > # Argument
-}
-
-***
+Arkadaşlar, komutlar ve çıktı arasında ayrım yapmamıza yardımcı olması için bu komutu çalıştırabilirsiniz (Yani EC2'ye bağlandığımız Terminali renkli hale getiriyor. ) :  export PS1="\[\e[;35m\][\u@\h \W]\$ \[\e[m\]"
