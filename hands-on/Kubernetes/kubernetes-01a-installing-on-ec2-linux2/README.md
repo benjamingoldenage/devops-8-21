@@ -149,7 +149,7 @@ sudo systemctl restart kubelet
 
 ```bash
 sudo kubeadm init --apiserver-advertise-address=<ec2-private-ip> --pod-network-cidr=10.244.0.0/16
-```172.31.23.157
+```
 
 > :warning: **Note**: If you are working on `t2.micro` or `t2.small` instances,  use the command with `--ignore-preflight-errors=NumCPU` as shown below to ignore the errors.
 
