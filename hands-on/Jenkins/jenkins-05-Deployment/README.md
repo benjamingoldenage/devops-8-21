@@ -1,4 +1,4 @@
-# Hands-on Jenkins-01 : Deploying Application to Staging/Production Environment with Jenkins
+# Hands-on Jenkins-05 : Deploying Application to Staging/Production Environment with Jenkins
 
 Purpose of the this hands-on training is to learn how to deploy applications to Staging/Production Environment with Jenkins.
 
@@ -239,7 +239,7 @@ At the end of the this hands-on training, students will be able to;
 
 - `Save` the job
 
-- Now, update the `Jenkinsfile` to include last 2 stages. For this purpose, add these 2 stages in `Jenkinsfile` like below:
+- Now, go to the `package-application-code-pipeline` job and update the `Jenkinsfile` to include last 2 stages. For this purpose, add these 2 stages in `Jenkinsfile` like below:
 
 ```text
         stage('Deploy to Staging Environment'){
