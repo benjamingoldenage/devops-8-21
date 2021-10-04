@@ -160,7 +160,7 @@ wget http://<jenkins_master_ip>:8080/jnlpJars/slave.jar
 
 ```text
 pipeline {
-    agent { label 'linux' }
+    agent { label 'Linux' }
     stages {
         stage('build') {
             steps {
