@@ -9,10 +9,11 @@
 # CC solution:
 # majority_vote(["A", "A", "A", "B", "C", "A"])
 lst = ["A", "A", "A", "B", "C", "A"]
-def majority_vote(lst):
+def majority_vote(votes):
     for i in lst:
         if lst.count(i) > len(lst)/2:
-            return i
+            return(i)
 
-print (len(lst))
+
+
 

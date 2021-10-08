@@ -8,7 +8,8 @@ def vote_count(votes):
             votes_dict[contestant] += 1  #if contestant exist, adds one vote
         else:
             votes_dict[contestant] = 1  #if contestant doesn't exist, creates contestant
-    contestants_sorted = sorted(votes_dict.items(), key=lambda contestant: contestant[1], reverse = True)  # sorts according to contestants vote DESC
+    contestants_sorted = sorted(votes_dict.items(), key=lambda contestant: contestant[1], reverse = True)  
+    # sorts according to contestants vote DESC
     winner, top_votes = contestants_sorted[0]  # first placed contestant is winner and counted votes
     print('{} wins with {} votes.'.format(winner, top_votes))
 
