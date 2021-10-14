@@ -1,12 +1,10 @@
-Initial Commands:
+A. Initial Commands
 export PS1="\[\e[36m\]\u\[\e[m\]@\h-\w:\[\e[31m\]\\$\[\e[m\] "
-
 
 sudo hostnamectl set-hostname jenkins-server
 bash
 
 ///////////////////////
-KURULUM:
 
 sudo yum update -y
 sudo amazon-linux-extras install java-openjdk11 -y
@@ -26,8 +24,7 @@ To access the admin password:
 If you run Jenkins inside docker as a detached container, you can use docker logs < containerId > commands to view the Jenkins logs.
 Or, execute the following commands:
 $ docker exec -it < containerId > bash
-$ cat /var/jenkins_home/secrets/initialAdminPassword
-
+$ cat /var/lib/jenkins/secrets/initialAdminPassword
 
 ANSIBLE:
 sudo amazon-linux-extras install ansible2

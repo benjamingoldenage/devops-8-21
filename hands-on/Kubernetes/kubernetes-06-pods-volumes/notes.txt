@@ -1,0 +1,8 @@
+export PS1="\[\e[36m\]\u\[\e[m\]@\h-\w:\[\e[31m\]\\$\[\e[m\] "
+
+
+sudo hostnamectl set-hostname jenkins-server
+bash
+
+>*Note: If you have problem with kubernetes cluster, you can use this link for lesson.*
+>https://www.katacoda.com/courses/kubernetes/playground
