@@ -1,0 +1,26 @@
+https://fossies.org/linux/ansible/lib/ansible/modules/packaging/os/yum.py
+
+https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+
+***
+
+ansible all -m shell -a "ls -al test* ; cat test*"
+
+***
+
+- ansible node3 -m setup
+	
+	- ansible node3 -m setup | grep ansible_distribution_version
+	
+	- ansible node2 -m setup | grep ansible_os_family
+	
+	- ansible node3 -m gather_facts 
+	
+	- ansible node3 -m gather_facts | grep ansible_os_family
+
+
+***
+
+
+ansible --list-hosts all
+ansible --list-hosts \!webservers
