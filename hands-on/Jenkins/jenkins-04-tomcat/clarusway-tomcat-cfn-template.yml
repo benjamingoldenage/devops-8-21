@@ -47,9 +47,9 @@ Resources:
           yum install java-1.8.0-openjdk -y
           yum install unzip wget -y
           cd /tmp
-          wget https://ftp.itu.edu.tr/Mirror/Apache/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.zip
+          wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
           unzip apache-tomcat-*.zip
-          mv apache-tomcat-8.5.71 /opt/tomcat
+          mv apache-tomcat-8.5.72 /opt/tomcat
           chmod +x /opt/tomcat/bin/*
   TomcatServerProduction:
     Type: AWS::EC2::Instance
@@ -70,9 +70,9 @@ Resources:
           yum install java-1.8.0-openjdk -y
           yum install unzip wget -y
           cd /tmp
-          wget https://ftp.itu.edu.tr/Mirror/Apache/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.zip
+          wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
           unzip apache-tomcat-*.zip
-          mv apache-tomcat-8.5.71 /opt/tomcat
+          mv apache-tomcat-8.5.72 /opt/tomcat
           chmod +x /opt/tomcat/bin/*
 Outputs:
   TomcatServerStage:

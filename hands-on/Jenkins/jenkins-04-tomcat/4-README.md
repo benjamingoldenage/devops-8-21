@@ -121,9 +121,6 @@ cd /opt/tomcat/conf
 
 - Note : Don't forget to remove the xml comment bloks `<!--` and `-->`. Delete these enclosing lines.
 
-
-
-
 - Go to the `/opt/tomcat/webapps/host-manager/META-INF/` and edit file `context.xml`. Actually commenting out the tagged `CookieProcessor` and `Valve` parts.
 
 ```bash
@@ -251,6 +248,3 @@ sudo systemctl start tomcat
 
 - Open your browser, get your Tomcat server ec2 instance Public IPv4 DNS and paste it at address bar with 8080. 
 "http://[ec2-public-dns-name]:8080"
-
-
-

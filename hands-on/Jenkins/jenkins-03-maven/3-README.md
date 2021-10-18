@@ -314,6 +314,14 @@ git push
 
 - Check the console log
 
-- (note: git configuration needs to be set for Jenkins user)
+- Note: git configuration needs to be set for Jenkins user
+    
+    - Switch to "jenkins" user and configure git.
+
+```bash
+sudo su - jenkins
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
 
 - Back to the job tab and show the `Last Successful Artifacts : single-module-project.jar`

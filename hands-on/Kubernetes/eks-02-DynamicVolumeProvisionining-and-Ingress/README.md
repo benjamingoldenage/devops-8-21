@@ -106,9 +106,9 @@ aws configure
 
 ```bash
 eksctl create cluster \
- --name Ben1-EKS \
+ --name serdar-cluster \
  --region us-east-2 \
- --nodegroup-name ben1-nodes \
+ --nodegroup-name my-nodes \
  --node-type t2.medium \
  --nodes 2 \
  --nodes-min 2 \
@@ -291,7 +291,6 @@ gp2 (default)            kubernetes.io/aws-ebs   Delete          WaitForFirstCon
 - Delete the pod
 
 ```bash
-
 kubectl delete -f pod-with-dynamic-storage.yaml
 ```
 

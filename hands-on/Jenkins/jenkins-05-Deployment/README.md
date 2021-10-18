@@ -37,7 +37,7 @@ At the end of the this hands-on training, students will be able to;
 
 - For Description : `This Job will deploy a Java-Tomcat-Sample to the staging environment.`
 
-- At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `1`.
+- At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `3`.
 
 - At `Build Environments` section, select `Delete workspace before build starts` and `Add timestamps to the Console Output` options.
 
@@ -51,7 +51,7 @@ At the end of the this hands-on training, students will be able to;
 - For `Add post-build action`, select `Deploy war/ear to a container`
   - for `WAR/EAR files`, fill in `**/*.war`.
   - for `Context path`, filll in `/`.
-  - for `Containers`, select `Tomcat 8.x Remote`.
+  - for `Containers`, select `Tomcat 9.x Remote`.
   - Add credentials
     - Add -> Jenkins
       - Add `username` and `password` as `tomcat/tomcat`.
@@ -140,7 +140,7 @@ At the end of the this hands-on training, students will be able to;
 
 - For Description : `This Job will deploy a Java-Tomcat-Sample to the deployment environment.`
 
-- At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `1`.
+- At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `3`.
 
 - At `Build Environments` section, select `Delete workspace before build starts` and `Add timestamps to the Console Output` and `Color ANSI Console Outputoptions`.
 
@@ -154,7 +154,7 @@ At the end of the this hands-on training, students will be able to;
 - For `Add post-build action`, select `Deploy war/ear to a container`
   - for `WAR/EAR files`, fill in `**/*.war`.
   - for `Context path`, filll in `/`.
-  - for `Containers`, select `Tomcat 8.x Remote`.
+  - for `Containers`, select `Tomcat 9.x Remote`.
   - From `Credentials`, select `tomcat/*****`.
   - for `Tomcat URL`, select `private ip` of production tomcat server like `http://172.31.28.5:8080`.
 
@@ -190,7 +190,7 @@ At the end of the this hands-on training, students will be able to;
 - At `General Tab`, select `Discard old build`,
   -  select `Strategy` and 
      -  for `Days to keep builds` enter `5` and 
-     -  `Max # of builds to keep` enter `1`.
+     -  `Max # of builds to keep` enter `3`.
 
 - At `Advanced Project Options: Pipeline` section
 
@@ -224,7 +224,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Find the `Build` section,
   - for `Project name`, enter `package-application-code-pipeline` 
-  - select `Last successful build`
+  - select `Latest successful build`
 
 - At `Post-build Actions (manual steps)`, click the `X` to remove this section.
 
@@ -235,7 +235,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Find the `Build` section,
   - for `Project name`, enter `package-application-code-pipeline` 
-  - select `Last successful build`
+  - select `Latest successful build`
 
 - `Save` the job
 
@@ -262,5 +262,3 @@ At the end of the this hands-on training, students will be able to;
 - Note: You can also use updated `Jenkinsfile2` file instead of updating `Jenkinsfile`.
 
 - Go to the `package-application-code-pipeline` then select `Build Now` and observe the behaviors.
-
-

@@ -138,7 +138,7 @@ wget http://<jenkins_master_ip>:8080/jnlpJars/slave.jar
 
 - Find the `General` section,
   - Click "Restrict where this project can be run" 
-  - Enter `Slave-1` for "Label Expression"
+  - Enter `Linux` for "Label Expression"
 
 - Click `Apply` and `Save`.
 
