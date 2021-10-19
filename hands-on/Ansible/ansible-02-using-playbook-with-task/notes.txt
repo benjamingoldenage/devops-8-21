@@ -24,3 +24,21 @@ ansible all -m shell -a "ls -al test* ; cat test*"
 
 ansible --list-hosts all
 ansible --list-hosts \!webservers
+
+
+***
+
+ansible node1:node2:node3 -m gather_facts | grep ansible_os_family
+
+***
+
+scp komutu:
+gönderme:
+scp -i oliver.pem lms.pem ec2-user@ec2-54-242-33-17.compute-1.amazonaws.com:/home/ec2-user
+
+çekme:
+scp -i oliver.pem ec2-user@ec2-54-242-33-17.compute-1.amazonaws.com:/home/ec2-user/playbook8.yml
+
+
+***
+variable_test: "/mnt/c/Users/Oliver/Desktop/ansible-ders/"
