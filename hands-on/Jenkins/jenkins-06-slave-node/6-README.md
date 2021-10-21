@@ -38,6 +38,7 @@ sudo yum install java-devel
 ```bash
 sudo yum install git -y
 ```
+
 - **Configure ssh connection between master and slave nodes.**
 
 - Go to the Jenkins Master server: 
@@ -132,17 +133,21 @@ wget http://<jenkins_master_ip>:8080/jnlpJars/slave.jar
 
 ## Part 2 - Free Style Project on Slave Node
 
-- Go to `my first job` that is created in hands-on 1, Part 5.
+- Open your Jenkins dashboard and click on `New Item` to create a new job item.
 
-- Select `Configure` on the left hand menu.
+- Enter `slave job` then select `free style project` and click `OK`.
 
-- Find the `General` section,
-  - Click "Restrict where this project can be run" 
-  - Enter `Linux` for "Label Expression"
+  - Enter `My first simple free style job on slave node` in the description field.
 
-- Click `Apply` and `Save`.
+  - Find the `General` section, click "Restrict where this project can be run" and enter `Linux` for "Label Expression"
 
-- Go to `my first job`.
+  - Go to `Build` section and choose "Execute Shell Command" step from `Add build step` dropdown menu.
+
+  - Write down just ``echo "Hello World, This is a job for slave node"` to execute shell command, in text area shown.
+
+  - Click `apply` and `save`  buttons.
+
+- Go to `slave job`.
 
 - Select `Build Now` on the left hand menu
 

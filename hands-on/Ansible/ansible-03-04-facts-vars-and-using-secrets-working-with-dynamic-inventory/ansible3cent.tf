@@ -5,17 +5,17 @@
 
 provider "aws" {
   region = "us-east-1"
-  //  access_key = ""
-  //  secret_key = ""
+  access_key = "AKIA33AMRMXZFGWGTF52"
+  secret_key = "r8KO0OvNfOEzGFKLDQbVsDUygjf2C3y9aaQoZjmD"
   //  If you have entered your credentials in AWS CLI before, you do not need to use these arguments.
 }
 
 resource "aws_instance" "ansible-worker-server" {
   ami             = "ami-02e136e904f3da870"
   instance_type   = "t2.micro"
-  key_name        = "mk"
+  key_name        = "explore"
   //  Write your pem file name
-  security_groups = ["ansible-sec-gr"]
+  security_groups = ["ansible-sec-group"]
   count = 2
   tags = {
     Name = "node-${count.index + 1}"
@@ -31,11 +31,11 @@ resource "aws_instance" "ansible-worker-server" {
 resource "aws_instance" "ansible-control-server" {
   ami             = "ami-02e136e904f3da870"
   instance_type   = "t2.micro"
-  key_name        = "mk"
+  key_name        = "explore"
   //  Write your pem file name
-  security_groups = ["ansible-sec-gr"]
+  security_groups = ["ansible-sec-group"]
   tags = {
-    Name = "ansible-control-node"
+    Name = "control-node"
   }
   user_data = <<-EOF
               #!/bin/bash
@@ -43,38 +43,21 @@ resource "aws_instance" "ansible-control-server" {
               sudo amazon-linux-extras install ansible2
               hostnamectl set-hostname "control-leader-server"
               bash
-              echo "interpreter_python=auto_silent\
-              host_key_checking = False\" >> ansible.cfg
-              echo "[webservers]\
-              node1 ansible_host=<node1_ip> ansible_user=ec2-user\
-              node2 ansible_host=<node1_ip> ansible_user=ec2-user\
-              [ubuntuservers]\
-              node3 ansible_host=<node2_ip> ansible_user=ubuntu\
-              [all:vars]\
-              ansible_ssh_private_key_file=/home/ec2-user/<pem file>"  >> hosts
+              echo "[defaults]
+              host_key_checking = False
+              interpreter_python=auto_silent" > /etc/ansible/ansible.cfg
+              echo "[webservers]
+              node1 ansible_host=<node1_ip> ansible_user=ec2-user
+              [dbservers]
+              node2 ansible_host=<node2_ip> ansible_user=ec2-user
+              [all:vars]
+              ansible_ssh_private_key_file=/home/ec2-user/<pem file>"  > /etc/ansible/hosts
               EOF
 }
 
-
-resource "aws_instance" "ansible-server-ubuntu" {
-  ami             = "ami-09e67e426f25ce0d7"
-  instance_type   = "t2.micro"
-  key_name        = "mk"
-  //  Write your pem file name
-  security_groups = ["ansible-sec-gr"]
-  tags = {
-    Name = "node-3-ubuntu"
-  }
-  user_data = <<-EOF
-              #!/bin/bash
-              apt update -y
-              hostnamectl set-hostname "worker-ubuntu"
-              bash
-              EOF
-}
 
 resource "aws_security_group" "ansible-sec-gr" {
-  name = "ansible-sec-gr"
+  name = "ansible-sec-group"
   tags = {
     Name = "ansible-sec-group"
   }
@@ -106,15 +89,10 @@ output "control-public-ip" {
 output "worker-public-ips" {
   value = aws_instance.ansible-worker-server.*.public_ip 
 }
-output "worker-ubuntu-public-ip" {
-  value = aws_instance.ansible-server-ubuntu.public_ip
-}
 output "control-private-ip" {
   value = aws_instance.ansible-control-server.private_ip 
 }
 output "worker-private-ips" {
   value = aws_instance.ansible-worker-server.*.private_ip 
 }
-output "worker-ubuntu-private-ip" {
-  value = aws_instance.ansible-server-ubuntu.private_ip
-}
+

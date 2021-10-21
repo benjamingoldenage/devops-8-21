@@ -1,0 +1,17 @@
+node ip.leri alması için terraform file.da değiştir
+
+node1 ansible_host=${aws_instance.ansible-worker-server[0].private_ip} ansible-user = ec2-user
+node2 ansible_host=${aws_instance.ansible-worker-server[1].private_ip} ansible-user = ec2-user
+
+scp kopyalama:
+scp -i ~/.ssh/personal-aws.pem  -o IdentitiesOnly=yes ~/.ssh/personal-aws.pem  ec2-user@3.95.215.215:/home/ec2-user/.ssh/
+
+***
+
+Bugün yapılanları bir tekrar edin lütfen. Birlikte yaptığımız adımları tekrar uygulamaya çalışın ama ezbere değil 
+değiştirin kurcalayın bozun hata ile karşılaşın, yeni makine ve yeni taglar ekleyin sonra çıkartın filtreleyin 
+--limit  kullanın ve sorunları çözmeye çalışın. Naçizane tavsiyem.
+
+***
+
+https://clarusway.com/ansible-working-with-dynamic-inventory-using-aws-ec2-plugin/
