@@ -17,7 +17,6 @@ resource "aws_instance" "control-node" {
   ami = "ami-0b0af3577fe5e3532"
   instance_type = "t2.micro"
   key_name = "oliver"
-  iam_instance_profile = "ansible_dynamic_inv"
   security_groups = ["ansible-session4-sec-gr"]
   tags = {
     Name = "control-node"
@@ -96,7 +95,7 @@ resource "null_resource" "config" {
 
   provisioner "remote-exec" {
     inline = [
-      "hostnamectl set-hostname Control-Node",
+      "sudo hostnamectl set-hostname Control-Node",
       "sudo yum install -y python3",
       "pip3 install --user ansible",
       "echo [servers] > inventory.txt",

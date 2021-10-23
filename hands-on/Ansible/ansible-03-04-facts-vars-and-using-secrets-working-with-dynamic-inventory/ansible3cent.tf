@@ -5,15 +5,15 @@
 
 provider "aws" {
   region = "us-east-1"
-  // access_key = ""
-  // secret_key = ""
+  //  access_key = ""
+  //  secret_key = ""
   //  If you have entered your credentials in AWS CLI before, you do not need to use these arguments.
 }
 
 resource "aws_instance" "ansible-worker-server" {
   ami             = "ami-02e136e904f3da870"
   instance_type   = "t2.micro"
-  key_name        = "explore"
+  key_name        = "mk"
   //  Write your pem file name
   security_groups = ["ansible-sec-group"]
   count = 2
@@ -31,7 +31,7 @@ resource "aws_instance" "ansible-worker-server" {
 resource "aws_instance" "ansible-control-server" {
   ami             = "ami-02e136e904f3da870"
   instance_type   = "t2.micro"
-  key_name        = "explore"
+  key_name        = "mk"
   //  Write your pem file name
   security_groups = ["ansible-sec-group"]
   tags = {
