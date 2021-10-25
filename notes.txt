@@ -1,0 +1,6 @@
+If you are moving into DevOps roles, the following might help. It is to give you an idea. It would be different from org to org.
+1. Devops engineers don't sit and create pipelines and automation every day. Instead, most of the work is a one-time activity.
+2. You could be part of the platform team, application team, support team,
+3. If you are part of a platform team, continuous development and innovations happen as part of building platform tools. It will be a great learning experience.
+4. If you are going to be part of the AppOps team, you will have to use the tools developed by platform teams, and there might be options to extend it as per the requirements. But you get to be part of daily meetings to understand what is going on in the project.
+5. If you are part of the support team, you get a playbook on solving issues, but there is less chance you get to be part of design discussions.

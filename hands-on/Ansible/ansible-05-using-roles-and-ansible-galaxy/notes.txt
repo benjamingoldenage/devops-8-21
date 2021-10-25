@@ -1,0 +1,13 @@
+https://galaxy.ansible.com/
+
+
+***
+
+
+sudo yum install -y cowsay
+cow_selection = turkey (ansible.cfg dosyasında belirtiliyor)
+
+kaldırmak için: export ANSIBLE_NOCOWS=1
+
+ANSIBLE_NOCOWS=1 ansible-playbook ping.yml
+export ANSIBLE_NOCOWS=1 .bashrc dosyasına eklenebilir >>> iptal için
