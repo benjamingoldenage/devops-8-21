@@ -28,3 +28,53 @@ $ cat /var/lib/jenkins/secrets/initialAdminPassword
 
 ANSIBLE:
 sudo amazon-linux-extras install ansible2
+
+
+
+
+- Update the OS:
+
+```
+sudo yum update -y
+```
+
+
+- Install Java:
+Maven is Java based application, so to run Maven we have to install Java on the server.
+
+```
+sudo yum install java-1.8.0-openjdk -y
+java -version
+```
+
+- Download and install Maven:
+
+```
+sudo wget https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+
+ls /etc/yum.repos.d/
+```
+
+```
+sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+```
+
+```
+cd /opt
+sudo yum install apache-maven -y
+mvn -version
+whereis mvn
+```
+
+- Download and install Nexus.
+
+```
+sudo wget -O nexus.tar.gz https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+ls
+```
+
+```
+sudo tar xvzf nexus.tar.gz
+ls
+sudo rm nexus.tar.gz
+ls
