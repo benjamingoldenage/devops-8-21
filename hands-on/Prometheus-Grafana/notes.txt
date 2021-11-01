@@ -1,0 +1,79 @@
+https://prometheus.io/docs/instrumenting/exporters/
+
+***
+
+https://valyala.medium.com/promql-tutorial-for-beginners-9ab455142085
+
+***
+
+
+https://prometheus.io/docs/prometheus/latest/querying/basics/
+
+***
+
+    1  sudo yum update -y
+    2  wget https://github.com/prometheus/prometheus/releases/download/v2.31.0-rc.0/prometheus-2.31.0-rc.0.linux-amd64.tar.gz
+    3  tar xvfz prometheus-*.tar.gz
+    4  cd prometheu*
+    5  cat prometheus.yml
+    6  export PS1="\[\e[31m\]\u\[\e[32m\]@\h-\w:\[\e[36m\]\\$\[\e[m\] "
+    7  ./prometheus --config.file=prometheus.yml
+    8  history
+
+***
+
+wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
+tar xvfz node_exporter-1.2.2.linux-amd64.tar.gz 
+./node_exporter
+    
+
+
+****
+
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-8.2.2-1.x86_64.rpm
+sudo yum install grafana-enterprise-8.2.2-1.x86_64.rpm
+sudo systemctl start grafana-server.service
+
+***
+
+https://grafana.com/grafana/dashboards/
+
+
+***
+
+sudo stress --cpu 8 --timeout 20
+
+sudo yum install -y stress
+
+
+***
+
+sudo amazon-linux-extras install epel -y
+sudo yum install -y stress
+stress --cpu 80 --timeout 20000
+
+
+***
+
+ps aux | grep promethus diyoruz bize çalışan procesesin id çıkar Sonra o idyi
+kill -1 id yazıyoruz
+
+
+***
+
+Evet 7682 process id si, ama orada prometheus çalışmıyor, görmeniz gereken config olarak promeheus.yml ı kullanan bir process olmalı. gördüğünüz id ise grep komutuyla kullandığınız process aslında.
+Mantıken  ne yaptığımızı anlamak önemli biz process leri listelerken son çalıştırdığımız komutun da process olarak çalışacak dolayısıyla listelenen ve içerisinde prometheus geçen processler arasında
+ps aux | grep prometheus
+komutu da yer alacak, sizin gördüğünüz bu komutun process i. Siz ise şöyle bir komut arıyorsunuz
+./bla-bla-bla --config promeheus.yml
+
+
+***
+
+içerisinde prometheus geçen prosess leri listelediğimiz bir komut var 
+ve bu listeleme komutunun içerisinde de prometheus geçiyor. 
+Dolayısıyla Serkan hocamın kill -1 yaptığı zaten doğru process değil, 
+o process bizim listeleme komutunun process i. 
+Asıl aradığımız şey aslında içerisinde prometheus.yml  geçen process olacak.
+
+
