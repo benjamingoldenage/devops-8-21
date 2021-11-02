@@ -1,1 +1,47 @@
 https://help.sonatype.com/repomanager3/
+
+***
+
+hocam her yazılım ortamı için zaten IDE/ compiler var Mavena yazılımcının neden ihtiyacı var?
+2 replies
+
+Matthias - Assistant  3 days ago
+Şöyle açıklarsak daha net anlaşaılabilir. Profesyonel Java uygulamalarında uygulamanın yazılmasından sunucuya deploy 
+edilmesine kadar geçen süreç bir dizi karmaşık işlemden oluşur. Bu işlemleri bağımlılıkların download edilmesi ve 
+classpathe eklenmesi, kaynak kodların derlenmesi, testlerin koşulması, dokümantasyonun yaratılması, uygulamanın 
+sunucuya deploy edilebilir JAR/WAR/ZIP arşiv dosyalarında paketlenmesi ve uygulamanın deploy edilmesi şeklinde 
+sıralayabiliriz. Bütün bu işlemlerin doğru sırada ve sürekli hatasız bir şekilde insan eliyle yerine getirilmesi 
+zor olduğundan ve çok zaman aldığından bütün bu süreç Apache Maven ile daha kolay, standart ve hatasız bir şekilde 
+ele alınabilir.
+
+
+
+***
+
+compiler da code hatası olursa nasıl düzeltiyoruz
+:question:
+1
+
+2 replies
+
+Matthias - Assistant  3 days ago
+Compiler’da, bir hata oluştuduğunda, compile işlemi durur ve hata giderildikten sonra bütün program 
+yeniden compile işlemine tabii tutulur. Interpreter, bunun tam aksine olarak, eğer bir hata meydana geldiğinde, 
+o anki çeviriyi engeller ve hata giderildiğine çeviriyi kaldığı yerden devam ettirir. Bu yüzden debug işlemi daha kolaydır.
+
+
+
+Matthias - Assistant  3 days ago
+Compiler’da, Interpreter’e kıyasla hata bulma daha zordur.
+
+
+***
+
+.jar .war farki nedir hocam
+2 replies
+
+Matthias - Assistant  3 days ago
+JAR ve WAR Dosyaları arasındaki ana fark, içerikleridir. JAR dosyaları, bir Java uygulamasını yürütmek 
+için Java sınıfı dosyaları, ilişkili meta verileri ve tek bir dosyada toplanmış kaynakları içeren dosyalardır. 
+Oysa WAR dosyaları, Servlet, JSP, HTML, JavaScript ve web uygulamaları geliştirmek için gerekli diğer 
+dosyaları içeren dosyalardır.
