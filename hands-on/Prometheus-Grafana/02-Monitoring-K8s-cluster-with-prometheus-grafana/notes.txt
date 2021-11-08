@@ -1,0 +1,11 @@
+curl https://raw.githubusercontent.com/clarusway/clarusway-devops-8-21/main/hands-on/Prometheus-Grafana/02-Monitoring-K8s-cluster-with-prometheus-grafana/ClusterRole.yml?token=AQB2TIG7T6I5L2MYWU4AS7TBPLPTE -o ClusterRole.yml
+
+
+
+***
+
+
+wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
+tar xvfz node_exporter-*.*-amd64.tar.gz
+cd node_exporter-*.*-amd64
+./node_exporter

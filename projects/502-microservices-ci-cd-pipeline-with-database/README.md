@@ -1019,3 +1019,493 @@ git checkout dev
 git merge feature/msp-13
 git push origin dev
 ```
+
+## MSP 14 - Create Docker Registry for Dev Manually
+
+* Create a Jenkins Job and name it as `create-ecr-docker-registry-for-dev` to create Docker Registry for `dev` on AWS ECR manually.
+
+``` bash
+PATH="$PATH:/usr/local/bin"
+APP_REPO_NAME="clarusway-repo/petclinic-app-dev"
+AWS_REGION="us-east-1"
+
+aws ecr create-repository \
+  --repository-name ${APP_REPO_NAME} \
+  --image-scanning-configuration scanOnPush=false \
+  --image-tag-mutability MUTABLE \
+  --region ${AWS_REGION}
+```
+
+## MSP 15 - Prepare Script for Development Docker Registry
+
+* Create `feature/msp-15` branch from `dev`.
+
+``` bash
+git checkout dev
+git branch feature/msp-15
+git checkout feature/msp-15
+```
+
+* Prepare a script to create Docker Registry for `dev` on AWS ECR and save it as `create-ecr-docker-registry-for-dev.sh` under `infrastructure` folder.
+
+``` bash
+PATH="$PATH:/usr/local/bin"
+APP_REPO_NAME="clarusway-repo/petclinic-app-dev"
+AWS_REGION="us-east-1"
+
+aws ecr create-repository \
+  --repository-name ${APP_REPO_NAME} \
+  --image-scanning-configuration scanOnPush=false \
+  --image-tag-mutability MUTABLE \
+  --region ${AWS_REGION}
+```
+
+* Commit the change, then push the script to the remote repo.
+
+``` bash
+git add .
+git commit -m 'added script for creating ECR registry for dev'
+git push --set-upstream origin feature/msp-15
+git checkout dev
+git merge feature/msp-15
+git push origin dev
+```
+
+## MSP 16 - Create a QA Automation Environment with Docker Swarm
+
+- Create `feature/msp-16` branch from `dev`.
+
+```bash
+git checkout dev
+git branch feature/msp-16
+git checkout feature/msp-16
+```
+
+- Prepare a Cloudformation template for Docker Swarm Infrastructure consisting of 3 Managers, 2 Worker Instances and save it as `dev-docker-swarm-infrastructure-cfn-template.yml` under `infrastructure` folder.
+
+- Grant permissions to Docker Machines within Cloudformation template to create ECR Registry, push or pull Docker images to/from ECR Repo.
+
+- Commit the change, then push the cloudformation template to the remote repo.
+
+```bash
+git add .
+git commit -m 'added cloudformation template for Docker Swarm infrastructure'
+git push --set-upstream origin feature/msp-16
+```
+
+- Create a Jenkins Job and name it as `test-creating-qa-automation-infrastructure` to test `bash` scripts creating QA Automation Infrastructure for `dev` manually.
+  * Select `Freestyle project` and click `OK`
+  * Select github project and write the url to your repository's page into `Project url` (https://github.com/[your-github-account]/petclinic-microservices)
+  * Under the `Source Code Management` select `Git` 
+  * Write the url of your repository into the `Repository URL` (https://github.com/[your-github-account]/petclinic-microservices.git)
+  * Add `*/feature/msp-16`branch to `Branches to build`
+  * Select `Add timestamps to the Console Output` under `Build Environment`
+  * Click `Add build step` under `Build` and select `Execute Shell`
+  * Write below script into the `Command` for checking the environment tools and versions with following script.
+
+```bash
+echo $PATH
+whoami
+PATH="$PATH:/usr/local/bin"
+python3 --version
+pip3 --version
+ansible --version
+aws --version
+```
+  * Click `Save`
+
+- After running the job above, replace the script with the one below in order to test creating key pair for `ansible`.
+
+```bash
+PATH="$PATH:/usr/local/bin"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+AWS_REGION="us-east-1"
+aws ec2 create-key-pair --region ${AWS_REGION} --key-name ${CFN_KEYPAIR} --query "KeyMaterial" --output text > ${CFN_KEYPAIR}
+chmod 400 ${CFN_KEYPAIR}
+```
+
+- After running the job above, replace the script with the one below in order to test creating Docker Swarm infrastructure with AWS Cloudformation.
+
+```bash
+PATH="$PATH:/usr/local/bin"
+APP_NAME="Petclinic"
+APP_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+CFN_TEMPLATE="./infrastructure/dev-docker-swarm-infrastructure-cfn-template.yml"
+AWS_REGION="us-east-1"
+aws cloudformation create-stack --region ${AWS_REGION} --stack-name ${APP_STACK_NAME} --capabilities CAPABILITY_IAM --template-body file://${CFN_TEMPLATE} --parameters ParameterKey=KeyPairName,ParameterValue=${CFN_KEYPAIR}
+```
+
+- After running the job above, replace the script with the one below in order to test SSH connection with one of the docker instance.
+
+```bash
+CFN_KEYPAIR="call-ansible-test-dev.key"
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${WORKSPACE}/${CFN_KEYPAIR} ec2-user@172.31.91.243 hostname
+```
+
+- Prepare static inventory file with name of `hosts.ini` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
+
+```ini
+172.31.91.243   ansible_user=ec2-user  
+172.31.87.143   ansible_user=ec2-user
+172.31.90.30    ansible_user=ec2-user
+172.31.92.190   ansible_user=ec2-user
+172.31.88.8     ansible_user=ec2-user
+```
+
+- Commit the change, then push the cloudformation template to the remote repo.
+
+```bash
+git add .
+git commit -m 'added ansible static inventory host.ini for testing'
+git push
+```
+
+- Configure `test-creating-qa-automation-infrastructure` job and replace the existing script with the one below in order to test ansible by pinging static hosts.
+
+```bash
+PATH="$PATH:/usr/local/bin"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+export ANSIBLE_INVENTORY="${WORKSPACE}/ansible/inventory/hosts.ini"
+export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${CFN_KEYPAIR}"
+export ANSIBLE_HOST_KEY_CHECKING=False
+ansible all -m ping
+```
+
+- Prepare dynamic inventory file with name of `dev_stack_dynamic_inventory_aws_ec2.yaml` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
+
+```yaml
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  tag:app-stack-name: APP_STACK_NAME
+  tag:environment: dev
+keyed_groups:
+  - key: tags['app-stack-name']
+    prefix: 'app_stack_'
+    separator: ''
+  - key: tags['swarm-role']
+    prefix: 'role_'
+    separator: ''
+  - key: tags['environment']
+    prefix: 'env_'
+    separator: ''
+  - key: tags['server']
+    separator: ''
+hostnames:
+  - "private-ip-address"
+compose:
+  ansible_user: "'ec2-user'"
+```
+
+- Prepare dynamic inventory file with name of `dev_stack_swarm_grand_master_aws_ec2.yaml` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
+
+```yaml
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  tag:app-stack-name: APP_STACK_NAME
+  tag:environment: dev
+  tag:swarm-role: grand-master
+hostnames:
+  - "private-ip-address"
+compose:
+  ansible_user: "'ec2-user'"
+```
+
+- Prepare dynamic inventory file with name of `dev_stack_swarm_managers_aws_ec2.yaml` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
+
+```yaml
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  tag:app-stack-name: APP_STACK_NAME
+  tag:environment: dev
+  tag:swarm-role: manager
+hostnames:
+  - "private-ip-address"
+compose:
+  ansible_user: "'ec2-user'"
+```
+
+- Prepare dynamic inventory file with name of `dev_stack_swarm_workers_aws_ec2.yaml` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
+
+```yaml
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  tag:app-stack-name: APP_STACK_NAME
+  tag:environment: dev
+  tag:swarm-role: worker
+hostnames:
+  - "private-ip-address"
+compose:
+  ansible_user: "'ec2-user'"
+```
+
+- Commit the change, then push the cloudformation template to the remote repo.
+
+```bash
+git add .
+git commit -m 'added ansible dynamic inventory files for dev environment'
+git push
+```
+
+- Configure `test-creating-qa-automation-infrastructure` job and replace the existing script with the one below in order to check the Ansible dynamic inventory for `dev` environment.
+
+```bash
+APP_NAME="Petclinic"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+PATH="$PATH:/usr/local/bin"
+export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${CFN_KEYPAIR}"
+export ANSIBLE_HOST_KEY_CHECKING=False
+export APP_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+# Dev Stack
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
+cat ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
+ansible-inventory -v -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml --graph
+# Dev Stack Grand Master
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_swarm_grand_master_aws_ec2.yaml
+cat ./ansible/inventory/dev_stack_swarm_grand_master_aws_ec2.yaml
+ansible-inventory -v -i ./ansible/inventory/dev_stack_swarm_grand_master_aws_ec2.yaml --graph
+# Dev Stack Managers
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_swarm_managers_aws_ec2.yaml
+cat ./ansible/inventory/dev_stack_swarm_managers_aws_ec2.yaml
+ansible-inventory -v -i ./ansible/inventory/dev_stack_swarm_managers_aws_ec2.yaml --graph
+# Dev Stack Workers
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_swarm_workers_aws_ec2.yaml
+cat ./ansible/inventory/dev_stack_swarm_workers_aws_ec2.yaml
+ansible-inventory -v -i ./ansible/inventory/dev_stack_swarm_workers_aws_ec2.yaml --graph
+```
+
+- After running the job above, replace the script with the one below in order to test all instances within dev dynamic inventory by pinging static hosts.
+
+```bash
+# Test dev dynamic inventory by pinging
+APP_NAME="Petclinic"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+PATH="$PATH:/usr/local/bin"
+export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${CFN_KEYPAIR}"
+export ANSIBLE_HOST_KEY_CHECKING=False
+export APP_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
+ansible -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml all -m ping
+```
+
+- Create an ansible playbook to install and configure tools (`Docker`, `Docker-Compose`, `AWS CLI V2`) needed for all Docker Swarm nodes (instances) and save it as `pb_setup_for_all_docker_swarm_instances.yaml` under `ansible/playbooks` folder.
+
+```yaml
+---
+- hosts: all
+  tasks:
+  - name: update os
+    yum:
+      name: '*'
+      state: present
+  - name: install docker
+    command: amazon-linux-extras install docker=latest -y
+  - name: start docker
+    service:
+      name: docker
+      state: started
+      enabled: yes
+  - name: add ec2-user to docker group
+    shell: "usermod -a -G docker ec2-user"
+  - name: install docker compose.
+    get_url:
+      url: https://github.com/docker/compose/releases/download/1.26.2/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 0755
+  - name: uninstall aws cli v1
+    file:
+      path: /bin/aws
+      state: absent
+  - name: download awscliv2 installer
+    unarchive:
+      src: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+      dest: /tmp
+      remote_src: yes
+      creates: /tmp/aws
+      mode: 0755
+  - name: run the installer
+    command:
+    args:
+      cmd: "/tmp/aws/install"
+      creates: /usr/local/bin/aws
+```
+
+- Create an ansible playbook to initialize the Docker Swarm and configure tools on `Grand Master` instance of Docker Swarm and save it as `pb_initialize_docker_swarm.yaml` under `ansible/playbooks` folder.
+
+```yaml
+---
+- hosts: role_grand_master
+  tasks:
+  - name: initialize docker swarm
+    shell: docker swarm init
+  - name: install git
+    yum:
+      name: git
+      state: present
+  - name: run the visualizer app for docker swarm
+    shell: |
+      docker service create \
+        --name=viz \
+        --publish=8088:8080/tcp \
+        --constraint=node.role==manager \
+        --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+        dockersamples/visualizer
+```
+
+- Create an ansible playbook to join the Docker manager nodes to the Swarm and save it as `pb_join_docker_swarm_managers.yaml` under `ansible/playbooks` folder.
+
+```yaml
+---
+- hosts: role_grand_master
+  tasks:
+  - name: Get swarm join-token for managers
+    shell: docker swarm join-token manager | grep -i 'docker'
+    register: join_command_for_managers
+
+  - debug: msg='{{ join_command_for_managers.stdout.strip() }}'
+  
+  - name: register grand_master with variable
+    add_host:
+      name: "grand_master"
+      manager_join: "{{ join_command_for_managers.stdout.strip() }}"
+
+- hosts: role_manager
+  tasks:
+  - name: Join managers to swarm
+    shell: "{{ hostvars['grand_master']['manager_join'] }}"
+    register: result_of_joining
+
+  - debug: msg='{{ result_of_joining.stdout }}'
+```
+
+- Create an ansible playbook to join the Docker worker nodes to the Swarm and save it as `pb_join_docker_swarm_workers.yaml` under `ansible/playbooks` folder.
+
+```yaml
+---
+- hosts: role_grand_master
+  tasks:
+  - name: Get swarm join-token for workers
+    shell: docker swarm join-token worker | grep -i 'docker'
+    register: join_command_for_workers
+
+  - debug: msg='{{ join_command_for_workers.stdout.strip() }}'
+  
+  - name: register grand_master with variable
+    add_host:
+      name: "grand_master"
+      worker_join: "{{ join_command_for_workers.stdout.strip() }}"
+
+- hosts: role_worker
+  tasks:
+  - name: Join workers to swarm
+    shell: "{{ hostvars['grand_master']['worker_join'] }}"
+    register: result_of_joining
+
+  - debug: msg='{{ result_of_joining.stdout }}'
+```
+
+- Commit the change, then push the ansible playbooks to the remote repo.
+
+```bash
+git add .
+git commit -m 'added ansible playbooks for dev environment'
+git push
+```
+
+- Configure `test-creating-qa-automation-infrastructure` job and replace the existing script with the one below in order to test the playbooks to create a Docker Swarm on Cloudformation Stack.
+
+```bash
+APP_NAME="Petclinic"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+PATH="$PATH:/usr/local/bin"
+export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${CFN_KEYPAIR}"
+export ANSIBLE_HOST_KEY_CHECKING=False
+export APP_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
+# Swarm Setup for all nodes (instances)
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_setup_for_all_docker_swarm_instances.yaml
+# Swarm Setup for Grand Master node
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_initialize_docker_swarm.yaml
+# Swarm Setup for Other Managers nodes
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_join_docker_swarm_managers.yaml
+# Swarm Setup for Workers nodes
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_join_docker_swarm_workers.yaml
+```
+
+- After running the job above, replace the script with the one below in order to test tearing down the Docker Swarm infrastructure using AWS CLI with following script.
+
+```bash
+PATH="$PATH:/usr/local/bin"
+APP_NAME="Petclinic"
+AWS_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+AWS_REGION="us-east-1"
+aws cloudformation delete-stack --region ${AWS_REGION} --stack-name ${AWS_STACK_NAME}
+```
+
+- After running the job above, replace the script with the one below in order to test deleting existing key pair using AWS CLI with following script.
+
+```bash
+PATH="$PATH:/usr/local/bin"
+CFN_KEYPAIR="call-ansible-test-dev.key"
+AWS_REGION="us-east-1"
+aws ec2 delete-key-pair --region ${AWS_REGION} --key-name ${CFN_KEYPAIR}
+rm -rf ${CFN_KEYPAIR}
+```
+
+- Create a script to create QA Automation infrastructure and save it as `create-qa-automation-environment.sh` under `infrastructure` folder. (This script shouldn't be used in one time. It should be applied step by step like above)
+
+```bash
+# Environment variables
+PATH="$PATH:/usr/local/bin"
+APP_NAME="Petclinic"
+CFN_KEYPAIR="Call-$APP_NAME-dev-${BUILD_NUMBER}.key"
+CFN_TEMPLATE="./infrastructure/dev-docker-swarm-infrastructure-cfn-template.yml"
+AWS_REGION="us-east-1"
+export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${CFN_KEYPAIR}"
+export ANSIBLE_HOST_KEY_CHECKING=False
+export APP_STACK_NAME="Call-$APP_NAME-App-${BUILD_NUMBER}"
+# Create key pair for Ansible
+aws ec2 create-key-pair --region ${AWS_REGION} --key-name ${CFN_KEYPAIR} --query "KeyMaterial" --output text > ${CFN_KEYPAIR}
+chmod 400 ${CFN_KEYPAIR}
+# Create infrastructure for Docker Swarm
+aws cloudformation create-stack --region ${AWS_REGION} --stack-name ${APP_STACK_NAME} --capabilities CAPABILITY_IAM --template-body file://${CFN_TEMPLATE} --parameters ParameterKey=KeyPairName,ParameterValue=${CFN_KEYPAIR}
+
+# Install Docker Swarm environment on the infrastructure
+# Update dynamic inventory (hosts/docker nodes)
+sed -i "s/APP_STACK_NAME/$APP_STACK_NAME/" ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
+# Install common tools on all instances/nodes
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_setup_for_all_docker_swarm_instances.yaml
+# Initialize Docker Swarm on Grand Master
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_initialize_docker_swarm.yaml
+# Join the manager instances to the Swarm
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_join_docker_swarm_managers.yaml
+# Join the worker instances to the Swarm
+ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml -b ./ansible/playbooks/pb_join_docker_swarm_workers.yaml
+
+# Build, Deploy, Test the application
+
+# Tear down the Docker Swarm infrastructure
+aws cloudformation delete-stack --region ${AWS_REGION} --stack-name ${AWS_STACK_NAME}
+# Delete key pair
+aws ec2 delete-key-pair --region ${AWS_REGION} --key-name ${CFN_KEYPAIR}
+rm -rf ${CFN_KEYPAIR}
+```
+
+- Commit the change, then push the script to the remote repo.
+
+```bash
+git add .
+git commit -m 'added scripts for qa automation environment'
+git push
+git checkout dev
+git merge feature/msp-16
+git push origin dev
+```
