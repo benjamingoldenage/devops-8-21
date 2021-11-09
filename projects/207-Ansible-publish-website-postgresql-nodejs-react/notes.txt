@@ -1,0 +1,450 @@
+1. terraform ile de cluster kurulabilir. main.tf. terraform dosyasında. sadece pem ve path.i değişecek.
+
+2. commands
+sudo yum update -y
+
+sudo yum install -y python3 
+
+pip3 install --user ansible
+
+pip3 install --user boto3
+
+***
+scp -i ~/oliver-ohio.pem -r student_files/ ec2-user@18.220.95.140:/home/ec2-user
+
+***
+
+
+mkdir postgres nodejs react
+
+ansible-vault create secret.yml
+
+ansible-playbook --ask-vault-pass docker_postgre.yml
+
+ansible _ansible_postgresql -m shell -a "sudo docker ps -a"
+
+
+3. 
+ansible.cfg
+.....
+[defaults]
+host_key_checking = False
+inventory=inventory_aws_ec2.yml
+interpreter_python=auto_silent
+deprecation_warnings=False
+private_key_file=/home/ec2-user/serdar_client.pem 
+remote_user=ec2-user
+......
+
+
+4. 
+inventory_aws_ec2.yml
+
+.........
+
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  tag:stack: ansible_project
+keyed_groups:
+  - key: tags.Name
+  - key: tags.environment
+compose:
+  ansible_host: public_ip_address
+.........
+
+5. aws-ec2 plugin için:
+https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html
+
+
+6. Postgres Dockerfile
+
+...
+FROM postgres
+
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 5432
+
+
+7. Ansible folder "docker_postgre.yml"
+....
+
+- name: configure postgresql
+  hosts: _ansible_postgresql
+  become: true
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: update pkgs
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Uninstall old versions
+      yum:
+        name: "{{ item }}"
+        state: removed
+      loop:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engine
+
+    - name: install yum-utils
+      yum:
+        name: yum-utils
+        state: latest
+      
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+
+    - name: Install pip
+      package: 
+        name: python3-pip
+        state: present
+        
+    - name: Install docker sdk
+      pip:
+        name: docker
+
+    - name: add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: start docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: create build directory
+      file:
+        path: /home/ec2-user/postgresql
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: copy the sql script
+      copy: 
+        src: /home/ec2-user/ansible-project/postgres/init.sql
+        dest: /home/ec2-user/postgresql
+
+    - name: copy the dockerfile
+      copy: 
+        src: /home/ec2-user/ansible-project/postgres/Dockerfile
+        dest: /home/ec2-user/postgresql 
+
+    - name: remove container and image if exist
+      shell: "docker ps -q --filter 'name=benjamin_postgre' && docker stop benjamin_postgre && docker rm -fv benjamin_postgre && docker image rm -f 42542817/postgre || echo 'Not Found'"
+
+    - name: build container image
+
+      docker_image:
+        name: 42542817/postgre
+        build:
+          path: /home/ec2-user/postgresql
+        source: build
+        state: present
+
+    - name: create postgresql docker container
+      docker_container:
+        name: benjamin_postgre
+        image: 42542817/postgre
+        state: started
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_PASSWORD: "{{ password }}"
+        volumes:
+          - /db-data:/var/lib/postgresql/data
+      register: container_info
+
+    - name: print the container info
+      debug:
+        var: container_info
+...
+
+
+nodejs Dockerfile:
+
+
+....
+
+FROM node:14
+
+# Create app directory
+WORKDIR /usr/src/app
+
+
+COPY package*.json ./
+
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
+
+
+# copy all files into the image
+COPY . .
+
+EXPOSE 5000
+
+CMD ["node","app.js"]  
+
+....
+
+
+
+****
+
+playbook nodejs: "docker_nodejs.yml"
+
+- name: install docker
+  hosts: _ansible_nodejs
+  become: true
+  tasks: 
+    - name: update packages
+      yum: 
+        name: "*"
+        state: latest
+    - name: Uninstall old versions
+      yum:
+        name: "{{ item }}"
+        state: removed
+      loop:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engine
+
+    - name: install yum-utils
+      yum:
+        name: yum-utils
+        state: latest
+      
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+
+    - name: Install pip
+      package: 
+        name: python3-pip
+        state: present
+        
+    - name: Install docker sdk
+      pip:
+        name: docker
+
+    - name: add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: start docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: create build directory
+      file:
+        path: /home/ec2-user/nodejs
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: copy files to nodejs node
+      copy: 
+        src: /home/ec2-user/ansible-project/todo-app-pern/server/
+        dest: /home/ec2-user/nodejs
+
+    - name: copy the dockerfile
+      copy: 
+        src: /home/ec2-user/ansible-project/nodejs/Dockerfile
+        dest: /home/ec2-user/nodejs
+
+    - name: remove container and image if exist
+      shell: "docker ps -q --filter 'name=oliver_nodejs' && docker stop oliver_nodejs && docker rm -fv oliver_nodejs && docker image rm -f olivercw/nodejs || echo 'Not Found'"
+
+    - name: build container image
+      docker_image:
+        name: olivercw/nodejs
+        build:
+          path: /home/ec2-user/nodejs
+        source: build
+        state: present
+
+    - name: create postgresql docker container
+      docker_container:
+        name: oliver_nodejs
+        image: olivercw/nodejs
+        state: started
+        ports:
+          - "5000:5000"
+      register: container_info
+
+    - name: print the container info
+      debug:
+        var: container_info
+
+
+
+        ***
+
+        react create dockerfile:
+
+        FROM node:14
+
+# Create app directory
+WORKDIR /app
+
+
+COPY package*.json ./
+
+RUN yarn install
+
+# copy all files into the image
+COPY . .
+
+EXPOSE 3000
+
+CMD ["yarn", "run", "start"]
+
+
+
+****
+
+react playbook "docker_react.yml"
+
+......
+
+
+- name: install docker
+  hosts: _oliver_ansible_react
+  become: true
+  tasks: 
+    - name: update packages
+      yum: 
+        name: "*"
+        state: latest
+    - name: Uninstall old versions
+      yum:
+        name: "{{ item }}"
+        state: removed
+      loop:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engine
+
+    - name: install yum-utils
+      yum:
+        name: yum-utils
+        state: latest
+      
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+
+    - name: Install pip
+      package: 
+        name: python3-pip
+        state: present
+        
+    - name: Install docker sdk
+      pip:
+        name: docker
+
+    - name: add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: start docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: create build directory
+      file:
+        path: /home/ec2-user/react
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: copy files to the react node
+      copy: 
+        src: /home/ec2-user/ansible-Project/todo-app-pern/client/
+        dest: /home/ec2-user/react
+
+    - name: copy the dockerfile
+      copy: 
+        src: /home/ec2-user/ansible-Project/react/Dockerfile
+        dest: /home/ec2-user/react
+
+    - name: remove container and image if exist
+      shell: "docker ps -q --filter 'name=oliver_react' && docker stop oliver_react && docker rm -fv oliver_react && docker image rm -f olivercw/react || echo 'Not Found'"
+
+    - name: build container image
+      docker_image:
+        name: olivercw/react
+        build:
+          path: /home/ec2-user/react
+        source: build
+        state: present
+
+    - name: create react docker container
+      docker_container:
+        name: oliver_react
+        image: olivercw/react
+        state: started
+        ports:
+          - "3000:3000"
+      register: container_info
+
+    - name: print the container info
+      debug:
+        var: container_info
+
+
+....
