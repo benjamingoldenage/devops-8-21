@@ -1767,7 +1767,6 @@ networks:
 - Create Ansible playbook for deploying app on Docker swarm using docker compose file and save it as `pb_deploy_app_on_docker_swarm.yaml` under `ansible/playbooks` folder.
 
 ```yaml
----
 - hosts: role_grand_master
   tasks:
   - name: Copy docker compose file to grand master
@@ -1819,7 +1818,6 @@ driver.close()
 - Create Ansible playbook for running dummy selenium job and save it as `pb_run_dummy_selenium_job.yaml` under `ansible/playbooks` folder.
 
 ```yaml
----
 - hosts: all
   tasks:
   - name: run dummy selenium job
@@ -1852,7 +1850,6 @@ git push --set-upstream origin feature/msp-17
 - Create Ansible playbook for running all selenium jobs under `selenium-jobs` folder and save it as `pb_run_selenium_jobs.yaml` under `ansible/playbooks` folder.
 
 ```yaml
----
 - hosts: all
   tasks:
   - name: run all selenium jobs
