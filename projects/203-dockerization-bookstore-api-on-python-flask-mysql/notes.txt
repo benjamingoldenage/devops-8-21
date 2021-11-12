@@ -1,0 +1,9 @@
+terraform kurulum için:
+sudo yum update -y && sudo yum install -y yum-utils && sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo && 
+sudo yum -y install terraform
+
+xxx
+curl http://3.88.159.169/books
+ 2005  curl -H "Content-Type: application/json" -X POST -d '{"author":"Paulo Coelho","title":"The Alchemist"}' http://3.88.159.169/books
+ 2006  curl -H "Content-Type: application/json" -X PUT -d '{"author":"Franz Kafka","title":"Dava"}' http://3.88.159.169/books/3
+ 2007  curl -H "Content-Type: application/json" -X DELETE http://3.88.159.169/books/2

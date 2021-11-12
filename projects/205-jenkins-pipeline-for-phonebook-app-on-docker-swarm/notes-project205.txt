@@ -1,0 +1,49 @@
+export PS1="\[\e[36m\]\u\[\e[m\]@\h-\w:\[\e[31m\]\\$\[\e[m\] "
+
+
+sudo hostnamectl set-hostname jenkins-server
+bash
+
+
+
+1. Cloudformation 
+clarusway-jenkins-with-git-docker-ecr-cfn.yml
+
+EC2 Jenkins-server
+Jenkins Sec.Grp.
+IAM Role-Profile
+
+///////////////////////
+A. Initial Commands
+sudo yum update -y
+sudo amazon-linux-extras install java-openjdk11 -y
+java -version
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
+sudo amazon-linux-extras install epel
+sudo yum install jenkins -y
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+# sudo systemctl status jenkins
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+--------------
+B. To access the admin password:
+If you run Jenkins inside docker as a detached container, you can use docker logs < containerId > commands to view the Jenkins logs.
+Or, execute the following commands:
+$ docker exec -it < containerId > bash
+$ cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+2. DOCKERFILE
+ALPİNE
+
+3. DOCKER-COMPOSE.YML
+* ECR IMAGE URL
+* GLOBAL
+
+4. PHONEBOOK-CFN-TEMPLATE.YML 
+
+3 MANAGER
+2 WORKER 
