@@ -66,7 +66,7 @@ thousand                         Warning -> 'Invalid input: Phone number should 
 
 - Lastly, after transforming your code into web application, you are requested to push your program to the project repository on the Github and deploy your solution in the development environment on AWS Cloud using Terraform to showcase your project. In the development environment, you can configure your Terraform file using the followings,
 
-![Project_202](Security-Groups.png)
+![Project_207](Security-Groups.png)
 
   - The application should be created with new AWS resources.
 

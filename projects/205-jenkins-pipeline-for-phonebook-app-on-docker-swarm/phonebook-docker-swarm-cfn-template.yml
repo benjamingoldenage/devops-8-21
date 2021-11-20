@@ -1,10 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
-  This Cloudformation Template deploys Phonebook Application to five Docker Machines on EC2 Instances
-  which are ready for Docker Swarm operations. Docker Machines will run on Amazon Linux 2 
-  with custom security group allowing SSH (22), HTTP (80) UDP (4789, 7946), 
-  and TCP(2377, 7946, 8080) connections from anywhere.
+  This Cloudformation Template deploys Phonebook Application to five Docker Machines on EC2 Instances which are ready for Docker Swarm operations. Docker Machines will run on Amazon Linux 2 with custom security group allowing SSH (22), HTTP (80) UDP (4789, 7946), and TCP(2377, 7946, 8080) connections from anywhere.
   User needs to select appropriate key name when launching the template.
 
 Parameters:
@@ -25,7 +22,7 @@ Resources:
               - ec2-instance-connect:SendSSHPublicKey
             Resource:
               - !Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
-            Condition: {"StringEquals": {"aws:ResourceTag/project":"204"}}
+            Condition: {"StringEquals": {"aws:ResourceTag/project":"205"}}
           - Effect: Allow
             Action:
               - ec2:DescribeInstances
@@ -83,11 +80,11 @@ Resources:
           FromPort: 8080
           ToPort: 8080
           CidrIp: 0.0.0.0/0
-  DockerSwarmManagerLT:
+  ManagerLT:
     Type: "AWS::EC2::LaunchTemplate"
     Properties:
       LaunchTemplateData:
-        ImageId: ami-087c17d1fe0178315
+        ImageId: ami-0ab4d1e9cf9a1215a
         InstanceType: t2.micro
         KeyName: !Ref KeyPairName
         IamInstanceProfile: 
@@ -121,11 +118,11 @@ Resources:
               mkdir -p /home/ec2-user/.docker
               cd /home/ec2-user/.docker
               echo '{"credsStore": "ecr-login"}' > config.json
-  DockerSwarmWorkerLT:
+  WorkerLT:
     Type: "AWS::EC2::LaunchTemplate"
     Properties:
       LaunchTemplateData:
-        ImageId: ami-087c17d1fe0178315
+        ImageId: ami-0ab4d1e9cf9a1215a
         InstanceType: t2.micro
         KeyName: !Ref KeyPairName
         IamInstanceProfile: 
@@ -162,8 +159,8 @@ Resources:
   DockerManager1:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-087c17d1fe0178315
-      InstanceType: t2.medium
+      ImageId: ami-0ab4d1e9cf9a1215a
+      InstanceType: t3a.medium
       KeyName: !Ref KeyPairName
       IamInstanceProfile: !Ref EC2ConnectProfile
       SecurityGroupIds:
@@ -174,7 +171,7 @@ Resources:
         - Key: server
           Value: docker-grand-master
         - Key: project
-          Value: "204"
+          Value: "205"
       UserData: 
         Fn::Base64: |
           #! /bin/bash
@@ -210,60 +207,60 @@ Resources:
       - DockerManager1
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref DockerSwarmManagerLT
-        Version: !GetAtt DockerSwarmManagerLT.LatestVersionNumber 
+        LaunchTemplateId: !Ref ManagerLT
+        Version: !GetAtt ManagerLT.LatestVersionNumber 
       Tags:                
         - Key: server
           Value: docker-manager-2                       
         - Key: Name
           Value: !Sub Docker Manager 2nd of ${AWS::StackName}
         - Key: project
-          Value: "204"
+          Value: "205"
   DockerManager3:
     Type: AWS::EC2::Instance
     DependsOn:
       - DockerManager2
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref DockerSwarmManagerLT
-        Version: !GetAtt DockerSwarmManagerLT.LatestVersionNumber
+        LaunchTemplateId: !Ref ManagerLT
+        Version: !GetAtt ManagerLT.LatestVersionNumber
       Tags:                
         - Key: server
           Value: docker-manager-3                        
         - Key: Name
           Value: !Sub Docker Manager 3rd of ${AWS::StackName}
         - Key: project
-          Value: "204"
+          Value: "205"
   DockerWorker1:
     Type: AWS::EC2::Instance
     DependsOn:
       - DockerManager2
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref DockerSwarmWorkerLT
-        Version: !GetAtt DockerSwarmWorkerLT.LatestVersionNumber
+        LaunchTemplateId: !Ref WorkerLT
+        Version: !GetAtt WorkerLT.LatestVersionNumber
       Tags:                
         - Key: server
           Value: docker-worker-1                       
         - Key: Name
           Value: !Sub Docker Worker 1st of ${AWS::StackName}
         - Key: project
-          Value: "204"
+          Value: "205"
   DockerWorker2:
     Type: AWS::EC2::Instance
     DependsOn:
       - DockerWorker1
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref DockerSwarmWorkerLT
-        Version: !GetAtt DockerSwarmWorkerLT.LatestVersionNumber 
+        LaunchTemplateId: !Ref WorkerLT
+        Version: !GetAtt WorkerLT.LatestVersionNumber 
       Tags:                
         - Key: server
           Value: docker-worker-2                       
         - Key: Name
           Value: !Sub Docker Worker 2nd of ${AWS::StackName}
         - Key: project
-          Value: "204" 
+          Value: "205" 
 Outputs:
   1stDockerManagerDashboard:
     Description: Dashboard for Docker Swarm
@@ -295,5 +292,3 @@ Outputs:
     Value: !Sub 
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerWorker2.PublicDnsName
-  
-  
