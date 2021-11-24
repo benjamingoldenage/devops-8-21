@@ -186,10 +186,13 @@ Resources:
 MSP-17:
 -------
 * MVN_VERSION=$(. ${WORKSPACE}/spring-petclinic-admin-server/target/maven-archiver/pom.properties && echo $version)
+  |--> source and . (a period) are the same command. 
   |--> The dot command (.) is a command used to evaluate commands in the current execution context.
   |--> When you run an executable script as ./my-script.sh, the commands are run in a new subshell, 
   while when run as . my-script.sh the current shell context will be used. 
   Generally, your current context is your terminal window. This mean that the dot command will apply changes to your current shell.
+  |--> With the dot (.) command, we can also read variables from a file. 
+       The variables must be set using the Bash syntax, VARIABLE=VALUE.
 
 * customers-service:
     image: "${IMAGE_TAG_CUSTOMERS_SERVICE}"
