@@ -3126,6 +3126,8 @@ git checkout feature/msp-23
 
     * Allow TCP on port 2376 to any node IP from a node created using Node Driver for Docker machine TLS port.
 
+    * Allow TCP on port 443 to all IP for checking AWS credentials.
+
   * Allow all protocol on all port from `call-rke-cluster-sg` for self communication between Rancher `controlplane`, `etcd`, `worker` nodes.
 
 * Log into Jenkins Server and create `call-rancher.key` key-pair for Rancher Server using AWS CLI
@@ -3225,8 +3227,8 @@ rke --version
 
 ```yaml
 nodes:
-  - address: 3.237.46.200
-    internal_address: 172.31.67.23
+  - address: <private_IP_address_of_Rancher_instance> # Creds for Rancher cluster is created for this IP address
+    internal_address: <private_IP_address_of_Rancher_instance>
     user: ubuntu
     role: [controlplane, worker, etcd]
 
@@ -3236,7 +3238,7 @@ services:
     creation: 6h
     retention: 24h
 
-ssh_key_path: ~/.ssh/call-rancher.key
+ssh_key_path: ~/.ssh/<key_file_name_for_Rancher_instance>
 
 # Required for external TLS termination with
 # ingress-nginx v0.22+
@@ -3257,6 +3259,7 @@ rke up --config ./rancher-cluster.yml
 ```bash
 mkdir -p ~/.kube
 mv ./kube_config_rancher-cluster.yml $HOME/.kube/config
+mv ./*****.rkestate $HOME/.kube/*****.rkestate  #This file has the necessary creds to connect to k8s cluster so move this file out of the git repo.
 chmod 400 ~/.kube/config
 kubectl get nodes
 kubectl get pods --all-namespaces
@@ -3299,7 +3302,7 @@ kubectl create namespace cattle-system
 ```bash
 helm install rancher rancher-latest/rancher \
   --namespace cattle-system \
-  --set hostname=rancher.clarusway.us \
+  --set hostname=<DNS_name_for_Rancher_Instance> \
   --set tls=external \
   --set replicas=1
 ```
@@ -3309,6 +3312,13 @@ helm install rancher rancher-latest/rancher \
 ```bash
 kubectl -n cattle-system get deploy rancher
 kubectl -n cattle-system get pods
+```
+
+* If you cannot get bootstrap password for your Rancher, run below command to reset your password and create a new one.
+
+```bash
+KUBECONFIG=~/.kube/config
+kubectl --kubeconfig $KUBECONFIG -n cattle-system exec $(kubectl --kubeconfig $KUBECONFIG -n cattle-system get pods -l app=rancher | grep '1/1' | head -1 | awk '{ print $1 }') -- reset-password
 ```
 
 ## MSP 25 - Create Staging and Production Environment with Rancher
@@ -3354,7 +3364,7 @@ Worker            : checked
 
 ``` bash
 PATH="$PATH:/usr/local/bin"
-APP_REPO_NAME="clarusway-repo/petclinic-app-staging"
+APP_REPO_NAME=<App_repo_name>
 AWS_REGION="us-east-1"
 
 aws ecr create-repository \
@@ -3788,7 +3798,7 @@ git checkout feature/msp-28
 nano petclinic-config
 # paste the content of kubeconfig file and save it.
 chmod 400 petclinic-config
-export KUBECONFIG=petclinic-config
+export KUBECONFIG="$HOME/petclinic-config
 # test the kubectl with petclinic namespaces
 kubectl get ns
 ```
@@ -3861,7 +3871,6 @@ spec:
 * Check if `ClusterIssuer` resource is created.
 
 ```bash
-export KUBECONFIG="$HOME/petclinic-config"
 kubectl apply -f k8s/tls-cluster-issuer-prod.yml
 kubectl get clusterissuers letsencrypt-prod -n cert-manager -o wide
 ```
@@ -3876,7 +3885,7 @@ metadata:
 spec:
   tls:
   - hosts:
-    - petclinic.clarusway.us
+    - <DNS_Name_of_Prod_server>
     secretName: petclinic-tls
 ```
 

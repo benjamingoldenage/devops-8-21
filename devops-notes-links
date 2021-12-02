@@ -25,3 +25,6 @@ https://www.qwiklabs.com
 https://cloudacademy.com/library/amazon-web-services/
 
 ***
+Github repo tanıtma:
+
+git remote set-url origin https://token@githuburl
